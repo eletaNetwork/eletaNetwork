@@ -1,0 +1,5 @@
+Building EletaCoin
+
+See doc/build-*.md for instructions on building eletacoind,
+the intended-for-services, no-graphical-interface, reference
+implementation of EletaCoin.

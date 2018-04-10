@@ -1,0 +1,22 @@
+[Unit]
+Description=EletaCoin's distributed currency daemon
+After=network.target
+
+[Service]
+User=eletacoin
+Group=eletacoin
+
+Type=forking
+PIDFile=/var/lib/eletacoind/eletacoind.pid
+ExecStart=/usr/bin/eletacoind -daemon -pid=/var/lib/eletacoind/eletacoind.pid \
+-conf=/etc/eletacoin/eletacoin.conf -datadir=/var/lib/eletacoind -disablewallet
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+#  eletacoind The eletacoin core server.
+#
+#
+# chkconfig: 345 80 20
+# description: eletacoind
+# processname: eletacoind
+#
+
+# Source function library.
+. /etc/init.d/functions
+
+# you can override defaults in /etc/sysconfig/eletacoind, see below
+if [ -f /etc/sysconfig/eletacoind ]; then
+        . /etc/sysconfig/eletacoind
+fi
+
+RETVAL=0
+
+prog=eletacoind
+# you can override the lockfile via ELETACOIND_LOCKFILE in /etc/sysconfig/eletacoind
+lockfile=${ELETACOIND_LOCKFILE-/var/lock/subsys/eletacoind}
+
+# eletacoind defaults to /usr/bin/eletacoind, override with ELETACOIND_BIN
+eletacoind=${ELETACOIND_BIN-/usr/bin/eletacoind}
+
+# eletacoind opts default to -disablewallet, override with ELETACOIND_OPTS
+eletacoind_opts=${ELETACOIND_OPTS--disablewallet}
+
+start() {
+    echo -n $"Starting $prog: "
+    daemon $DAEMONOPTS $eletacoind $eletacoind_opts
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch $lockfile
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping $prog: "
+    killproc $prog
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && rm -f $lockfile
+    return $RETVAL
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status $prog
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: service $prog {start|stop|status|restart}"
+        exit 1
+        ;;
+esac

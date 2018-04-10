@@ -1,0 +1,8 @@
+/usr/bin/eletacoin-cli		--	gen_context(system_u:object_r:eletacoin_exec_t,s0)
+/usr/sbin/eletacoind		--	gen_context(system_u:object_r:eletacoin_exec_t,s0)
+/usr/lib(64)?/eletacoin/eletacoind		--	gen_context(system_u:object_r:eletacoin_exec_t,s0)
+
+/etc/eletacoin(/.*)?		gen_context(system_u:object_r:eletacoin_conf_t,s0)
+/var/lib/eletacoin(/.*)?		gen_context(system_u:object_r:eletacoin_var_lib_t,s0)
+
+(/var)?/run/eletacoind(/.*)?   gen_context(system_u:object_r:eletacoin_var_run_t,s0)

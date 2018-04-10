@@ -1,0 +1,92 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/eletacoin/.eletacoin" ]; then
+	ELETACOIND_DEFAULT_DATADIR="/var/lib/eletacoin/.eletacoin"
+else
+	ELETACOIND_DEFAULT_DATADIR="/var/lib/eletacoind"
+fi
+
+ELETACOIND_CONFIGFILE=${ELETACOIND_CONFIGFILE:-/etc/eletacoin/eletacoin.conf}
+ELETACOIND_PIDDIR=${ELETACOIND_PIDDIR:-/var/run/eletacoind}
+ELETACOIND_PIDFILE=${ELETACOIND_PIDFILE:-${ELETACOIND_PIDDIR}/eletacoind.pid}
+ELETACOIND_DATADIR=${ELETACOIND_DATADIR:-${ELETACOIND_DEFAULT_DATADIR}}
+ELETACOIND_USER=${ELETACOIND_USER:-${ELETACOIN_USER:-eletacoin}}
+ELETACOIND_GROUP=${ELETACOIND_GROUP:-eletacoin}
+ELETACOIND_BIN=${ELETACOIND_BIN:-/usr/bin/eletacoind}
+ELETACOIND_NICE=${ELETACOIND_NICE:-${NICELEVEL:-0}}
+ELETACOIND_OPTS="${ELETACOIND_OPTS:-${ELETACOIN_OPTS}}"
+
+name="EletaCoin Core Daemon"
+description="EletaCoin cryptocurrency P2P network daemon"
+
+command="/usr/bin/eletacoind"
+command_args="-pid=\"${ELETACOIND_PIDFILE}\" \
+		-conf=\"${ELETACOIND_CONFIGFILE}\" \
+		-datadir=\"${ELETACOIND_DATADIR}\" \
+		-daemon \
+		${ELETACOIND_OPTS}"
+
+required_files="${ELETACOIND_CONFIGFILE}"
+start_stop_daemon_args="-u ${ELETACOIND_USER} \
+			-N ${ELETACOIND_NICE} -w 2000"
+pidfile="${ELETACOIND_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${ELETACOIND_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${ELETACOIND_USER}:${ELETACOIND_GROUP}" \
+	"${ELETACOIND_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${ELETACOIND_USER}:${ELETACOIND_GROUP}" \
+	"${ELETACOIND_PIDDIR}"
+
+	checkpath -f \
+	-o ${ELETACOIND_USER}:${ELETACOIND_GROUP} \
+	-m 0660 \
+	${ELETACOIND_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${ELETACOIND_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run eletacoind."
+		eerror "The setting must appear in ${ELETACOIND_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"EletaCoin Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}

@@ -1,0 +1,81 @@
+policy_module(eletacoin, 1.100.1)
+
+########################################
+#
+# Declarations
+#
+
+type eletacoin_t;
+type eletacoin_exec_t;
+init_daemon_domain(eletacoin_t, eletacoin_exec_t)
+
+permissive eletacoin_t;
+
+type eletacoin_initrc_exec_t;
+init_script_file(eletacoin_initrc_exec_t)
+
+type eletacoin_conf_t;
+files_type(eletacoin_conf_t)
+
+type eletacoin_var_lib_t;
+files_type(eletacoin_var_lib_t)
+
+type eletacoin_var_run_t;
+files_type(eletacoin_var_run_t)
+
+type eletacoin_port_t;
+corenet_port(eletacoin_port_t)
+
+########################################
+#
+# eletacoin local policy
+#
+allow eletacoin_t self:process { fork };
+
+allow eletacoin_t self:fifo_file rw_fifo_file_perms;
+allow eletacoin_t self:unix_stream_socket create_stream_socket_perms;
+
+manage_dirs_pattern(eletacoin_t, eletacoin_conf_t, eletacoin_conf_t)
+manage_files_pattern(eletacoin_t, eletacoin_conf_t, eletacoin_conf_t)
+
+manage_dirs_pattern(eletacoin_t, eletacoin_var_lib_t, eletacoin_var_lib_t)
+manage_files_pattern(eletacoin_t, eletacoin_var_lib_t, eletacoin_var_lib_t)
+files_var_lib_filetrans(eletacoin_t, eletacoin_var_lib_t, { dir file })
+
+manage_dirs_pattern(eletacoin_t, eletacoin_var_run_t, eletacoin_var_run_t)
+manage_files_pattern(eletacoin_t, eletacoin_var_run_t, eletacoin_var_run_t)
+
+sysnet_dns_name_resolve(eletacoin_t)
+corenet_all_recvfrom_unlabeled(eletacoin_t)
+
+allow eletacoin_t self:tcp_socket create_stream_socket_perms;
+corenet_tcp_sendrecv_generic_if(eletacoin_t)
+corenet_tcp_sendrecv_generic_node(eletacoin_t)
+corenet_tcp_sendrecv_all_ports(eletacoin_t)
+corenet_tcp_bind_generic_node(eletacoin_t)
+
+gen_require(`
+    type eletacoin_port_t;
+')
+allow eletacoin_t eletacoin_port_t:tcp_socket name_bind;
+
+gen_require(`
+    type eletacoin_port_t;
+')
+allow eletacoin_t eletacoin_port_t:tcp_socket name_connect;
+
+domain_use_interactive_fds(eletacoin_t)
+
+files_read_etc_files(eletacoin_t)
+
+miscfiles_read_localization(eletacoin_t)
+
+sysnet_dns_name_resolve(eletacoin_t)
+
+allow eletacoin_t eletacoin_exec_t:file execute_no_trans;
+allow eletacoin_t self:process setsched;
+corecmd_exec_ls(eletacoin_t)
+corenet_tcp_connect_http_port(eletacoin_t)
+dev_read_urand(eletacoin_t)
+fs_getattr_xattr_fs(eletacoin_t)
+kernel_read_system_state(eletacoin_t)

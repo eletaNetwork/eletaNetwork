@@ -1,0 +1,6 @@
+usr/local/bin/eletacoin-qt usr/bin
+share/pixmaps/eletacoin32.xpm usr/share/pixmaps
+share/pixmaps/eletacoin16.xpm usr/share/pixmaps
+share/pixmaps/eletacoin128.png usr/share/pixmaps
+debian/eletacoin-qt.desktop usr/share/applications
+debian/eletacoin-qt.protocol usr/share/kde4/services/
