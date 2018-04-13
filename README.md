@@ -1,4 +1,3 @@
-![EletaCoin](./img/logo-extended.png)
 
 This is the working repository for Eleta Coin 4.1.1, our fork of bitcoin-core 0.13.
 
