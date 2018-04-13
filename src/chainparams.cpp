@@ -165,6 +165,10 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
 
+        vSeeds.push_back(CDNSSeedData("seed.eleta.io", "seed.eleta.io"));
+        vSeeds.push_back(CDNSSeedData("seed2.eleta.io", "seed2.eleta.io"));
+        vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
+
         fMiningRequiresPeers = true;
         fDefaultConsistencyChecks = false;
         fRequireStandard = true;

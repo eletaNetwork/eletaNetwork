@@ -475,7 +475,7 @@
     </message>
     <message>
         <source>name</source>
-        <translation>navn</translation>
+        <translation>eletan</translation>
     </message>
     <message>
         <source>Directory already exists. Add %1 if you intend to create a new directory here.</source>
@@ -975,7 +975,7 @@
     </message>
     <message>
         <source>Name</source>
-        <translation>Navn</translation>
+        <translation>Eletan</translation>
     </message>
     <message>
         <source>Number of connections</source>

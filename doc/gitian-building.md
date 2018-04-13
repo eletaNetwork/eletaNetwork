@@ -442,10 +442,10 @@ Then when building, override the remote URLs that gbuild would otherwise pull fr
 cd /some/root/path/
 git clone https://github.com/eletacoin-core/eletacoin-detached-sigs.git
 
-NAVPATH=/some/root/path/eletacoin
+ELETAPATH=/some/root/path/eletacoin
 SIGPATH=/some/root/path/eletacoin-detached-sigs
 
-./bin/gbuild --url eletacoin=${NAVPATH},signature=${SIGPATH} ../eletacoin/contrib/gitian-descriptors/gitian-win-signer.yml
+./bin/gbuild --url eletacoin=${ELETAPATH},signature=${SIGPATH} ../eletacoin/contrib/gitian-descriptors/gitian-win-signer.yml
 ```
 
 Signing externally
